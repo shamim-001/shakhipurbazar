@@ -1,0 +1,1770 @@
+import React, { useState, useMemo } from 'react';
+import { useApp } from '../src/context/AppContext';
+import { Order } from '../types';
+import AdminAnalyticsTab from './AdminAnalyticsTab';
+import AdminPayoutsTab from './AdminPayoutsTab';
+import AdminPromotionsTab from './AdminPromotionsTab';
+import UserManagementTab from './UserManagementTab';
+import RoleManagementTab from './RoleManagementTab';
+import PaymentGatewaySettings from './PaymentGatewaySettings';
+import {
+    ChartBarIcon, CurrencyDollarIcon, MegaphoneIcon,
+    UserGroupIcon, ShieldCheckIcon, Cog8ToothIcon,
+    ArchiveBoxIcon, StoreIcon, TruckIcon, GlobeAltIcon,
+    ShoppingBagIcon
+} from '../components/icons';
+
+
+const SettingsTab: React.FC<{
+    activeSetting: string | null;
+    setActiveSetting: (s: string | null) => void;
+}> = ({ activeSetting, setActiveSetting }) => {
+    const { language, platformSettings, updatePlatformSettings } = useApp();
+
+    return (
+        <div className="p-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                {language === 'en' ? 'Platform Settings' : 'প্ল্যাটফর্ম সেটিংস'}
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-6">
+                <button
+                    type="button"
+                    onClick={() => setActiveSetting('payment')}
+                    className={`bg-white dark:bg-slate-800 p-6 rounded-lg shadow hover:shadow-lg transition-all text-left ${activeSetting === 'payment' ? 'ring-2 ring-blue-500' : ''}`}
+                >
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Payment</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Gateways & Config</p>
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => setActiveSetting('general')}
+                    className={`bg-white dark:bg-slate-800 p-6 rounded-lg shadow hover:shadow-lg transition-all text-left ${activeSetting === 'general' ? 'ring-2 ring-blue-500' : ''}`}
+                >
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">General</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Basic Info & Logo</p>
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => setActiveSetting('delivery')}
+                    className={`bg-white dark:bg-slate-800 p-6 rounded-lg shadow hover:shadow-lg transition-all text-left ${activeSetting === 'delivery' ? 'ring-2 ring-blue-500' : ''}`}
+                >
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Delivery</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Fees & Zones</p>
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => setActiveSetting('modules')}
+                    className={`bg-white dark:bg-slate-800 p-6 rounded-lg shadow hover:shadow-lg transition-all text-left ${activeSetting === 'modules' ? 'ring-2 ring-blue-500' : ''}`}
+                >
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Modules</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Visibility Toggles</p>
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => setActiveSetting('commission')}
+                    className={`bg-white dark:bg-slate-800 p-6 rounded-lg shadow hover:shadow-lg transition-all text-left ${activeSetting === 'commission' ? 'ring-2 ring-blue-500' : ''}`}
+                >
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Commissions</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Role Base Rates</p>
+                </button>
+            </div>
+
+            {activeSetting === 'payment' && (
+                <div className="mt-6">
+                    <PaymentGatewaySettings />
+                </div>
+            )}
+
+            {activeSetting === 'general' && (
+                <div className="mt-6 space-y-6">
+                    <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+                        <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">Basic Info</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">App Name</label>
+                                <input
+                                    type="text"
+                                    value={platformSettings.appName}
+                                    onChange={(e) => updatePlatformSettings({ ...platformSettings, appName: e.target.value })}
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Logo URL</label>
+                                <input
+                                    type="text"
+                                    value={platformSettings.logoUrl}
+                                    onChange={(e) => updatePlatformSettings({ ...platformSettings, logoUrl: e.target.value })}
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Support Email</label>
+                                <input
+                                    type="email"
+                                    value={platformSettings.supportEmail}
+                                    onChange={(e) => updatePlatformSettings({ ...platformSettings, supportEmail: e.target.value })}
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Support Phone</label>
+                                <input
+                                    type="text"
+                                    value={platformSettings.supportPhone}
+                                    onChange={(e) => updatePlatformSettings({ ...platformSettings, supportPhone: e.target.value })}
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+                        <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">Footer & Socials</h3>
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Footer Description (EN)</label>
+                                    <textarea
+                                        rows={2}
+                                        value={platformSettings.footerDescription?.en || ''}
+                                        onChange={(e) => updatePlatformSettings({
+                                            ...platformSettings,
+                                            footerDescription: { ...platformSettings.footerDescription, en: e.target.value }
+                                        })}
+                                        className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Footer Description (BN)</label>
+                                    <textarea
+                                        rows={2}
+                                        value={platformSettings.footerDescription?.bn || ''}
+                                        onChange={(e) => updatePlatformSettings({
+                                            ...platformSettings,
+                                            footerDescription: { ...platformSettings.footerDescription, bn: e.target.value }
+                                        })}
+                                        className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                    />
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Copyright Text (EN)</label>
+                                    <input
+                                        type="text"
+                                        value={platformSettings.copyrightText?.en || ''}
+                                        onChange={(e) => updatePlatformSettings({
+                                            ...platformSettings,
+                                            copyrightText: { ...platformSettings.copyrightText, en: e.target.value }
+                                        })}
+                                        className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Copyright Text (BN)</label>
+                                    <input
+                                        type="text"
+                                        value={platformSettings.copyrightText?.bn || ''}
+                                        onChange={(e) => updatePlatformSettings({
+                                            ...platformSettings,
+                                            copyrightText: { ...platformSettings.copyrightText, bn: e.target.value }
+                                        })}
+                                        className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                    />
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Twitter URL</label>
+                                    <input
+                                        type="text"
+                                        value={platformSettings.socialLinks?.twitter || ''}
+                                        onChange={(e) => updatePlatformSettings({
+                                            ...platformSettings,
+                                            socialLinks: { ...platformSettings.socialLinks, twitter: e.target.value }
+                                        })}
+                                        className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Instagram URL</label>
+                                    <input
+                                        type="text"
+                                        value={platformSettings.socialLinks?.instagram || ''}
+                                        onChange={(e) => updatePlatformSettings({
+                                            ...platformSettings,
+                                            socialLinks: { ...platformSettings.socialLinks, instagram: e.target.value }
+                                        })}
+                                        className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {activeSetting === 'delivery' && (
+                <div className="mt-6 bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+                    <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">Delivery Configuration</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Standard Delivery Fee (Tk)
+                            </label>
+                            <input
+                                type="number"
+                                value={platformSettings.deliveryFee}
+                                onChange={(e) => updatePlatformSettings({ ...platformSettings, deliveryFee: Number(e.target.value) })}
+                                className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                            />
+                            <p className="text-xs text-gray-500 mt-1">Base fee for all orders.</p>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Free Delivery Threshold (Tk)
+                            </label>
+                            <input
+                                type="number"
+                                value={platformSettings.freeDeliveryThreshold}
+                                onChange={(e) => updatePlatformSettings({ ...platformSettings, freeDeliveryThreshold: Number(e.target.value) })}
+                                className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                            />
+                            <p className="text-xs text-gray-500 mt-1">Orders above this amount get free delivery.</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {activeSetting === 'modules' && (
+                <div className="mt-6 bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+                    <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">Module Visibility</h3>
+                    <p className="text-sm text-gray-500 mb-6">Toggle the visibility of main tabs on the homepage.</p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {platformSettings.mainTabs && Object.entries(platformSettings.mainTabs).map(([key, config]) => (
+                            <div key={key} className="flex items-center justify-between p-4 border dark:border-slate-700 rounded-lg">
+                                <div>
+                                    <h4 className="font-medium text-gray-900 dark:text-white">{config.label?.en || key}</h4>
+                                    <p className="text-xs text-gray-500">{config.label?.bn}</p>
+                                </div>
+                                <label className="relative inline-flex items-center cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={config.show}
+                                        onChange={(e) => {
+                                            const updatedTabs = {
+                                                ...platformSettings.mainTabs,
+                                                [key]: { ...config, show: e.target.checked }
+                                            };
+                                            updatePlatformSettings({ ...platformSettings, mainTabs: updatedTabs });
+                                        }}
+                                        className="sr-only peer"
+                                    />
+                                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600"></div>
+                                </label>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {activeSetting === 'commission' && (
+                <div className="mt-6 bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+                    <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">Role-Based Commissions</h3>
+                    <p className="text-sm text-gray-500 mb-6">Set standard commission rates for different platform roles.</p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Reseller Commission (%)
+                            </label>
+                            <input
+                                type="number"
+                                value={platformSettings.commissions?.reseller ?? 5}
+                                onChange={(e) => updatePlatformSettings({
+                                    ...platformSettings,
+                                    commissions: { ...platformSettings.commissions, reseller: Number(e.target.value) }
+                                } as any)}
+                                className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                            />
+                            <p className="text-xs text-gray-500 mt-1">Default seller markup limit?</p>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Agency Commission (%)
+                            </label>
+                            <input
+                                type="number"
+                                value={platformSettings.commissions?.agency ?? 8}
+                                onChange={(e) => updatePlatformSettings({
+                                    ...platformSettings,
+                                    commissions: { ...platformSettings.commissions, agency: Number(e.target.value) }
+                                } as any)}
+                                className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                            />
+                            <p className="text-xs text-gray-500 mt-1">Fee from agency earnings.</p>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Driver Commission (%)
+                            </label>
+                            <input
+                                type="number"
+                                value={platformSettings.commissions?.driver ?? 15}
+                                onChange={(e) => updatePlatformSettings({
+                                    ...platformSettings,
+                                    commissions: { ...platformSettings.commissions, driver: Number(e.target.value) }
+                                } as any)}
+                                className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                            />
+                            <p className="text-xs text-gray-500 mt-1">Fee from driver earnings.</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+
+
+const OrdersTab = () => {
+    const { language, orders, updateOrderStatus } = useApp();
+    const [filterStatus, setFilterStatus] = useState('all');
+    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+    const [showDetailsModal, setShowDetailsModal] = useState(false);
+
+    const filteredOrders = filterStatus === 'all'
+        ? orders
+        : orders.filter(o => o.status === filterStatus);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+    const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+    const paginatedOrders = filteredOrders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+    const goToPage = (page: number) => {
+        if (page >= 1 && page <= totalPages) setCurrentPage(page);
+    };
+
+    React.useEffect(() => {
+        setCurrentPage(1);
+    }, [filterStatus]);
+
+    const handleStatusChange = async (orderId: string, newStatus: string) => {
+        if (confirm(`Are you sure you want to change status to ${newStatus}?`)) {
+            await updateOrderStatus(orderId, newStatus as any);
+        }
+    };
+
+    const viewOrderDetails = (order: Order) => {
+        setSelectedOrder(order);
+        setShowDetailsModal(true);
+    };
+
+    return (
+        <div className="p-6">
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {language === 'en' ? 'All Orders' : 'সকল অর্ডার'}
+                </h2>
+                <select
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                    className="px-4 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                >
+                    <option value="all">All Status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow">
+                    <div className="text-2xl font-bold text-gray-800 dark:text-white">{orders.length}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Total Orders</div>
+                </div>
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow">
+                    <div className="text-2xl font-bold text-yellow-600">{orders.filter(o => o.status === 'Pending').length}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Pending</div>
+                </div>
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow">
+                    <div className="text-2xl font-bold text-blue-600">{orders.filter(o => o.status === 'Confirmed').length}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Confirmed</div>
+                </div>
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow">
+                    <div className="text-2xl font-bold text-green-600">{orders.filter(o => o.status === 'Delivered').length}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Delivered</div>
+                </div>
+            </div>
+
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow overflow-hidden">
+                <table className="w-full">
+                    <thead className="bg-gray-50 dark:bg-slate-700">
+                        <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Order ID</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Date</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Customer</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Total</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Status</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200 dark:divide-slate-700">
+                        {paginatedOrders.map(order => (
+                            <tr key={order.id} className="hover:bg-gray-50 dark:hover:bg-slate-700/50">
+                                <td className="px-6 py-4 text-sm font-mono text-gray-900 dark:text-white">#{order.id.slice(0, 8)}</td>
+                                <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{new Date(order.date).toLocaleDateString()}</td>
+                                <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{order.customerId}</td>
+                                <td className="px-6 py-4 text-sm font-bold text-gray-900 dark:text-white">৳{order.total}</td>
+                                <td className="px-6 py-4">
+                                    <select
+                                        value={order.status}
+                                        onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                                        className={`px-2 py-1 text-xs rounded-full border-0 font-bold ${order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
+                                            order.status === 'Confirmed' ? 'bg-blue-100 text-blue-700' :
+                                                order.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
+                                                    'bg-yellow-100 text-yellow-700'
+                                            }`}
+                                    >
+                                        <option value="Pending">Pending</option>
+                                        <option value="Confirmed">Confirmed</option>
+                                        <option value="Delivered">Delivered</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                    </select>
+                                </td>
+                                <td className="px-6 py-4 text-sm">
+                                    <button
+                                        onClick={() => viewOrderDetails(order)}
+                                        className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400"
+                                    >
+                                        View Details
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            {/* Pagination Controls */}
+            <div className="flex items-center justify-between mt-4">
+                <span className="text-sm text-gray-700 dark:text-gray-300">
+                    Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredOrders.length)} of {filteredOrders.length} orders
+                </span>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => goToPage(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="px-3 py-1 border rounded hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-50"
+                    >
+                        Previous
+                    </button>
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                        let p = i + 1;
+                        if (totalPages > 5 && currentPage > 3) p = currentPage - 2 + i;
+                        if (p > totalPages) return null;
+                        return (
+                            <button
+                                key={p}
+                                onClick={() => goToPage(p)}
+                                className={`px-3 py-1 border rounded ${currentPage === p ? 'bg-blue-600 text-white' : 'hover:bg-gray-100 dark:hover:bg-slate-700'}`}
+                            >
+                                {p}
+                            </button>
+                        );
+                    })}
+                    <button
+                        onClick={() => goToPage(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="px-3 py-1 border rounded hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-50"
+                    >
+                        Next
+                    </button>
+                </div>
+            </div>
+
+            {/* Order Details Modal */}
+            {showDetailsModal && selectedOrder && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white dark:bg-slate-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                        <div className="p-6">
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                                    Order #{selectedOrder.id.slice(0, 8)}
+                                </h3>
+                                <button
+                                    onClick={() => setShowDetailsModal(false)}
+                                    className="text-gray-500 hover:text-gray-700"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div>
+                                    <h4 className="font-bold text-gray-900 dark:text-white mb-2">Order Information</h4>
+                                    <div className="grid grid-cols-2 gap-4 text-sm">
+                                        <div>
+                                            <span className="text-gray-500 dark:text-gray-400">Date:</span>
+                                            <p className="text-gray-900 dark:text-white">{new Date(selectedOrder.date).toLocaleString()}</p>
+                                        </div>
+                                        <div>
+                                            <span className="text-gray-500 dark:text-gray-400">Status:</span>
+                                            <p className="text-gray-900 dark:text-white">{selectedOrder.status}</p>
+                                        </div>
+                                        <div>
+                                            <span className="text-gray-500 dark:text-gray-400">Payment:</span>
+                                            <p className="text-gray-900 dark:text-white">{selectedOrder.paymentMethod}</p>
+                                        </div>
+                                        <div>
+                                            <span className="text-gray-500 dark:text-gray-400">Total:</span>
+                                            <p className="text-gray-900 dark:text-white font-bold">৳{selectedOrder.total}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h4 className="font-bold text-gray-900 dark:text-white mb-2">Items</h4>
+                                    <div className="space-y-2">
+                                        {selectedOrder.items.map((item, idx) => (
+                                            <div key={idx} className="flex justify-between text-sm border-b pb-2">
+                                                <span className="text-gray-900 dark:text-white">{item.name[language]} x {item.quantity}</span>
+                                                <span className="text-gray-900 dark:text-white">৳{item.price * item.quantity}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mt-6 flex justify-end gap-2">
+                                <button
+                                    onClick={() => setShowDetailsModal(false)}
+                                    className="px-4 py-2 bg-gray-200 dark:bg-slate-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+
+
+const ProductsTab = () => {
+    const { language, products, vendors, updateProduct } = useApp();
+    const [filterStatus, setFilterStatus] = useState('All');
+    const [filterType, setFilterType] = useState('All');
+    const [currentPage, setCurrentPage] = useState(1);
+
+    // Derived state - filter by both status AND type
+    const filteredProducts = useMemo(() => {
+        let filtered = products;
+
+        // Filter by status
+        if (filterStatus !== 'All') {
+            filtered = filtered.filter(p => p.status === filterStatus);
+        }
+
+        // Filter by product type
+        if (filterType !== 'All') {
+            filtered = filtered.filter(p => (p.productType || 'new') === filterType);
+        }
+
+        return filtered;
+    }, [products, filterStatus, filterType]);
+
+    const itemsPerPage = 10;
+    const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+    const paginatedProducts = filteredProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+    const handleApprove = (product: any) => {
+        if (confirm('Are you sure you want to approve this product?')) {
+            updateProduct({ ...product, status: 'Approved' });
+        }
+    };
+
+    const handleReject = (product: any) => {
+        const reason = prompt('Please provide a reason for rejection:');
+        if (reason) {
+            updateProduct({ ...product, status: 'Rejected', rejectionReason: reason });
+        }
+    };
+
+    const handleRequestReview = (product: any) => {
+        const note = prompt('Please provide feedback for the vendor:');
+        if (note) {
+            updateProduct({ ...product, status: 'ReviewRequested', rejectionReason: note }); // Reusing rejectionReason for feedback
+        }
+    };
+
+    return (
+        <div className="p-6">
+            <div className="flex flex-col gap-4 mb-6">
+                <div className="flex justify-between items-center">
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                        {language === 'en' ? 'Product Management' : 'পণ্য পরিচালনা'}
+                    </h2>
+                    <div className="flex gap-2">
+                        {['All', 'Pending', 'Approved', 'Rejected', 'ReviewRequested'].map(status => (
+                            <button
+                                key={status}
+                                onClick={() => { setFilterStatus(status); setCurrentPage(1); }}
+                                className={`px-3 py-1 rounded text-sm font-medium ${filterStatus === status
+                                    ? 'bg-indigo-600 text-white'
+                                    : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200'
+                                    }`}
+                            >
+                                {status}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Product Type Filter */}
+                <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Product Type:</span>
+                    {['All', 'new', 'wholesale', 'resell'].map(type => (
+                        <button
+                            key={type}
+                            onClick={() => { setFilterType(type); setCurrentPage(1); }}
+                            className={`px-3 py-1 rounded text-sm font-medium ${filterType === type
+                                ? 'bg-green-600 text-white'
+                                : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200'
+                                }`}
+                        >
+                            {type === 'new' ? 'New Products' : type === 'wholesale' ? 'Wholesale' : type === 'resell' ? 'Resell' : 'All Types'}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow">
+                    <div className="text-2xl font-bold text-gray-800 dark:text-white">{products.length}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Total</div>
+                </div>
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow">
+                    <div className="text-2xl font-bold text-yellow-600">{products.filter(p => p.status === 'Pending').length}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Pending</div>
+                </div>
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow">
+                    <div className="text-2xl font-bold text-green-600">{products.filter(p => p.status === 'Approved').length}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Approved</div>
+                </div>
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow">
+                    <div className="text-2xl font-bold text-red-600">{products.filter(p => p.status === 'Rejected').length}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Rejected</div>
+                </div>
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow border-2 border-purple-300 dark:border-purple-700">
+                    <div className="text-2xl font-bold text-purple-600">{products.filter(p => (p.productType || 'new') === 'wholesale').length}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Wholesale</div>
+                </div>
+            </div>
+
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow overflow-hidden">
+                <table className="w-full">
+                    <thead className="bg-gray-50 dark:bg-slate-700">
+                        <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Product</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Vendor</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Price/Stock</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Status</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200 dark:divide-slate-700">
+                        {paginatedProducts.map(product => (
+                            <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-slate-700/50">
+                                <td className="px-6 py-4">
+                                    <div className="flex items-center">
+                                        <img src={product.images[0]} alt={product.name[language]} className="w-10 h-10 rounded mr-3 object-cover" />
+                                        <div>
+                                            <div className="font-medium text-gray-900 dark:text-white">{product.name[language]}</div>
+                                            <div className="text-xs text-gray-500">{product.category.en} - {product.productType || 'New'}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
+                                    {vendors.find(v => v.id === product.vendorId)?.name[language] || 'Unknown'}
+                                </td>
+                                <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
+                                    <div className="font-bold">৳{product.price}</div>
+                                    <div className={`text-xs ${product.stock > 0 ? 'text-green-500' : 'text-red-500'}`}>{product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}</div>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <span className={`px-2 py-1 text-xs rounded-full font-bold ${product.status === 'Approved' ? 'bg-green-100 text-green-700' :
+                                        product.status === 'Rejected' ? 'bg-red-100 text-red-700' :
+                                            product.status === 'ReviewRequested' ? 'bg-orange-100 text-orange-700' :
+                                                'bg-yellow-100 text-yellow-700'
+                                        }`}>
+                                        {product.status || 'Pending'}
+                                    </span>
+                                </td>
+                                <td className="px-6 py-4 text-sm">
+                                    <div className="flex gap-2">
+                                        <button onClick={() => handleApprove(product)} className="text-green-600 hover:text-green-900 font-medium disabled:opacity-50" disabled={product.status === 'Approved'}>
+                                            Approve
+                                        </button>
+                                        <button onClick={() => handleRequestReview(product)} className="text-orange-600 hover:text-orange-900 font-medium">
+                                            Review
+                                        </button>
+                                        <button onClick={() => handleReject(product)} className="text-red-600 hover:text-red-900 font-medium disabled:opacity-50" disabled={product.status === 'Rejected'}>
+                                            Reject
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                {/* Pagination Controls */}
+                <div className="flex items-center justify-between p-4 border-t dark:border-slate-700">
+                    <span className="text-sm text-gray-700 dark:text-gray-300">
+                        Page {currentPage} of {totalPages}
+                    </span>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                            className="px-3 py-1 border rounded hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-50"
+                        >
+                            Previous
+                        </button>
+                        <button
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            disabled={currentPage === totalPages}
+                            className="px-3 py-1 border rounded hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-50"
+                        >
+                            Next
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+
+const VendorsTab = () => {
+    const { language, products, vendors } = useApp();
+    return (
+        <div className="p-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                {language === 'en' ? 'Vendor Management' : 'বিক্রেতা পরিচালনা'}
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow">
+                    <div className="text-2xl font-bold text-gray-800 dark:text-white">{vendors.length}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Total Vendors</div>
+                </div>
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow">
+                    <div className="text-2xl font-bold text-green-600">{vendors.filter(v => v.status === 'Active').length}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Active Vendors</div>
+                </div>
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow">
+                    <div className="text-2xl font-bold text-yellow-600">{vendors.filter(v => v.status === 'Pending').length}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Pending Approval</div>
+                </div>
+            </div>
+
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow overflow-hidden">
+                <table className="w-full">
+                    <thead className="bg-gray-50 dark:bg-slate-700">
+                        <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Vendor</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Products</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Status</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200 dark:divide-slate-700">
+                        {vendors.map(vendor => (
+                            <tr key={vendor.id} className="hover:bg-gray-50 dark:hover:bg-slate-700/50">
+                                <td className="px-6 py-4">
+                                    <div className="flex items-center">
+                                        <img src={vendor.logo} alt={vendor.name[language]} className="w-10 h-10 rounded-full mr-3" />
+                                        <div className="font-medium text-gray-900 dark:text-white">{vendor.name[language]}</div>
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{products.filter(p => p.vendorId === vendor.id).length}</td>
+                                <td className="px-6 py-4">
+                                    <span className={`px-2 py-1 text-xs rounded-full ${vendor.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                        {vendor.status}
+                                    </span>
+                                </td>
+                                <td className="px-6 py-4 text-sm">
+                                    <button className="text-indigo-600 hover:text-indigo-900 mr-3">Edit</button>
+                                    <button className="text-red-600 hover:text-red-900">Suspend</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+};
+
+
+const DriversTab = () => {
+    const { language, users } = useApp();
+    const drivers = users.filter(u => u.role === 'delivery');
+
+    return (
+        <div className="p-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                {language === 'en' ? 'Driver Management' : 'ড্রাইভার পরিচালনা'}
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow">
+                    <div className="text-2xl font-bold text-gray-800 dark:text-white">{drivers.length}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Total Drivers</div>
+                </div>
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow">
+                    <div className="text-2xl font-bold text-green-600">{drivers.filter(d => d.status === 'active').length}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Active</div>
+                </div>
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow">
+                    <div className="text-2xl font-bold text-yellow-600">{drivers.filter(d => d.status !== 'active').length}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Pending/Inactive</div>
+                </div>
+            </div>
+
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow overflow-hidden">
+                <table className="w-full">
+                    <thead className="bg-gray-50 dark:bg-slate-700">
+                        <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Driver</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Email</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Status</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200 dark:divide-slate-700">
+                        {drivers.map(driver => (
+                            <tr key={driver.id} className="hover:bg-gray-50 dark:hover:bg-slate-700/50">
+                                <td className="px-6 py-4">
+                                    <div className="flex items-center">
+                                        <img src={driver.image || 'https://via.placeholder.com/40'} alt={driver.name} className="w-10 h-10 rounded-full mr-3" />
+                                        <div className="font-medium text-gray-900 dark:text-white">{driver.name}</div>
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{driver.email}</td>
+                                <td className="px-6 py-4">
+                                    <span className={`px-2 py-1 text-xs rounded-full ${driver.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                                        }`}>
+                                        {driver.status || 'Active'}
+                                    </span>
+                                </td>
+                                <td className="px-6 py-4 text-sm">
+                                    <button className="text-indigo-600 hover:text-indigo-900 mr-3">Edit</button>
+                                    <button className="text-red-600 hover:text-red-900">Suspend</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+};
+
+
+const AgenciesTab = () => {
+    const { language, users } = useApp();
+    const agencies = users.filter(u => u.role === 'agency');
+
+    return (
+        <div className="p-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                {language === 'en' ? 'Agency Management' : 'এজেন্সি পরিচালনা'}
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow">
+                    <div className="text-2xl font-bold text-gray-800 dark:text-white">{agencies.length}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Total Agencies</div>
+                </div>
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow">
+                    <div className="text-2xl font-bold text-green-600">{agencies.filter(a => a.status === 'active').length}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Active</div>
+                </div>
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow">
+                    <div className="text-2xl font-bold text-yellow-600">{agencies.filter(a => a.status !== 'active').length}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Pending/Inactive</div>
+                </div>
+            </div>
+
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+                {agencies.length > 0 ? (
+                    <table className="w-full">
+                        <thead className="bg-gray-50 dark:bg-slate-700">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Agency</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Email</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Status</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 dark:divide-slate-700">
+                            {agencies.map(agency => (
+                                <tr key={agency.id} className="hover:bg-gray-50 dark:hover:bg-slate-700/50">
+                                    <td className="px-6 py-4">
+                                        <div className="font-medium text-gray-900 dark:text-white">{agency.name}</div>
+                                    </td>
+                                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{agency.email}</td>
+                                    <td className="px-6 py-4">
+                                        <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">
+                                            {agency.status || 'Active'}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 text-sm">
+                                        <button className="text-indigo-600 hover:text-indigo-900 mr-3">Edit</button>
+                                        <button className="text-red-600 hover:text-red-900">Suspend</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                ) : (
+                    <p className="text-center text-gray-500 dark:text-gray-400">No agencies registered yet</p>
+                )}
+            </div>
+        </div>
+    );
+};
+
+
+const CategoriesTab = () => {
+    const { language, categoryCommissions, addCategoryCommission, updateCategory, deleteCategoryCommission, addSubCategory, updateSubCategory, deleteSubCategory } = useApp();
+    const [editingCategory, setEditingCategory] = useState<any>(null);
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [newCategory, setNewCategory] = useState({ en: '', bn: '', commissionRate: 10 });
+    const [editFormData, setEditFormData] = useState({ en: '', bn: '', commissionRate: 10, originalEn: '' });
+
+    const handleAdd = () => {
+        if (!newCategory.en || !newCategory.bn) {
+            alert('Please fill all fields');
+            return;
+        }
+        const categoryCommission = {
+            id: `CAT-${Date.now()}`,
+            category: { en: newCategory.en, bn: newCategory.bn },
+            commissionRate: newCategory.commissionRate,
+            isActive: true,
+            subCategories: []
+        };
+        addCategoryCommission(categoryCommission);
+        setNewCategory({ en: '', bn: '', commissionRate: 10 });
+        setShowAddModal(false);
+    };
+
+    const openEditModal = (cat: any) => {
+        setEditFormData({
+            en: cat.category.en,
+            bn: cat.category.bn,
+            commissionRate: cat.commissionRate,
+            originalEn: cat.category.en
+        });
+        setEditingCategory(cat);
+        setShowEditModal(true);
+    };
+
+    const handleSaveEdit = () => {
+        if (!editFormData.en || !editFormData.bn) {
+            alert('Please fill all fields');
+            return;
+        }
+        updateCategory(editFormData.originalEn, {
+            ...editingCategory,
+            category: { en: editFormData.en, bn: editFormData.bn },
+            commissionRate: editFormData.commissionRate
+        });
+        setShowEditModal(false);
+        setEditingCategory(null);
+    };
+
+    const handleDelete = (cat: any) => {
+        if (confirm(`Delete category "${cat.category.en}"?`)) {
+            deleteCategoryCommission(cat.category.en);
+        }
+    };
+
+    const handleAddSubCategory = (parentCatEn: string) => {
+        const en = prompt('Subcategory name (English):');
+        const bn = prompt('Subcategory name (Bengali):');
+        if (en && bn) {
+            addSubCategory(parentCatEn, { en, bn });
+        }
+    };
+
+    const handleEditSubCategory = (parentCatEn: string, oldSubEn: string, currentSubBn: string) => {
+        const en = prompt('Edit subcategory name (English):', oldSubEn);
+        const bn = prompt('Edit subcategory name (Bengali):', currentSubBn);
+        if (en && bn) {
+            updateSubCategory(parentCatEn, oldSubEn, { en, bn });
+        }
+    };
+
+    const handleDeleteSubCategory = (parentCatEn: string, subEn: string) => {
+        if (confirm(`Delete subcategory "${subEn}"?`)) {
+            deleteSubCategory(parentCatEn, subEn);
+        }
+    };
+
+    return (
+        <div className="p-6">
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {language === 'en' ? 'Category & Commission Management' : 'বিভাগ ও কমিশন পরিচালনা'}
+                </h2>
+                <button
+                    onClick={() => setShowAddModal(true)}
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                >
+                    + Add Category
+                </button>
+            </div>
+
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow overflow-hidden">
+                <table className="w-full">
+                    <thead className="bg-gray-50 dark:bg-slate-700">
+                        <tr>
+                            <th className="text-left py-3 px-6 text-sm font-medium text-gray-700 dark:text-gray-300">Category</th>
+                            <th className="text-left py-3 px-6 text-sm font-medium text-gray-700 dark:text-gray-300">Subcategories</th>
+                            <th className="text-left py-3 px-6 text-sm font-medium text-gray-700 dark:text-gray-300">Commission %</th>
+                            <th className="text-left py-3 px-6 text-sm font-medium text-gray-700 dark:text-gray-300">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200 dark:divide-slate-700">
+                        {categoryCommissions.map(cat => (
+                            <tr key={cat.id} className="hover:bg-gray-50 dark:hover:bg-slate-700/50">
+                                <td className="py-4 px-6">
+                                    <div className="font-medium text-gray-900 dark:text-white">{cat.category[language]}</div>
+                                    <div className="text-xs text-gray-500">{cat.category.en} / {cat.category.bn}</div>
+                                </td>
+                                <td className="py-4 px-6">
+                                    {cat.subCategories && cat.subCategories.length > 0 ? (
+                                        <div className="flex flex-wrap gap-1">
+                                            {cat.subCategories.map((sub: any, idx: number) => (
+                                                <div key={idx} className="group relative inline-flex items-center">
+                                                    <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded cursor-pointer hover:bg-blue-200"
+                                                        onClick={() => handleEditSubCategory(cat.category.en, sub.en || sub.name?.en, sub.bn || sub.name?.bn)}>
+                                                        {sub.name?.[language] || sub[language]}
+                                                    </span>
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); handleDeleteSubCategory(cat.category.en, sub.en || sub.name?.en); }}
+                                                        className="ml-1 opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 text-xs"
+                                                        title="Delete"
+                                                    >
+                                                        ×
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <span className="text-sm text-gray-400">None</span>
+                                    )}
+                                    <button
+                                        onClick={() => handleAddSubCategory(cat.category.en)}
+                                        className="text-xs text-indigo-600 hover:text-indigo-900 mt-1 block"
+                                    >
+                                        + Add Subcategory
+                                    </button>
+                                </td>
+                                <td className="py-4 px-6">
+                                    <span className="font-bold text-gray-900 dark:text-white">{cat.commissionRate}%</span>
+                                </td>
+                                <td className="py-4 px-6">
+                                    <div className="flex gap-3">
+                                        <button onClick={() => openEditModal(cat)} className="text-indigo-600 hover:text-indigo-900 font-medium">
+                                            Edit
+                                        </button>
+                                        <button onClick={() => handleDelete(cat)} className="text-red-600 hover:text-red-900 font-medium">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            {/* Add Category Modal */}
+            {showAddModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white dark:bg-slate-800 rounded-lg p-6 w-full max-w-md">
+                        <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">Add New Category</h3>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name (English)</label>
+                                <input
+                                    type="text"
+                                    value={newCategory.en}
+                                    onChange={(e) => setNewCategory({ ...newCategory, en: e.target.value })}
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name (Bengali)</label>
+                                <input
+                                    type="text"
+                                    value={newCategory.bn}
+                                    onChange={(e) => setNewCategory({ ...newCategory, bn: e.target.value })}
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Commission Rate (%)</label>
+                                <input
+                                    type="number"
+                                    value={newCategory.commissionRate}
+                                    onChange={(e) => setNewCategory({ ...newCategory, commissionRate: Number(e.target.value) })}
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex gap-3 mt-6">
+                            <button
+                                onClick={() => setShowAddModal(false)}
+                                className="flex-1 px-4 py-2 bg-gray-200 dark:bg-slate-600 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleAdd}
+                                className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                            >
+                                Add Category
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Edit Category Modal */}
+            {showEditModal && editingCategory && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white dark:bg-slate-800 rounded-lg p-6 w-full max-w-md">
+                        <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">Edit Category</h3>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name (English)</label>
+                                <input
+                                    type="text"
+                                    value={editFormData.en}
+                                    onChange={(e) => setEditFormData({ ...editFormData, en: e.target.value })}
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name (Bengali)</label>
+                                <input
+                                    type="text"
+                                    value={editFormData.bn}
+                                    onChange={(e) => setEditFormData({ ...editFormData, bn: e.target.value })}
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Commission Rate (%)</label>
+                                <input
+                                    type="number"
+                                    value={editFormData.commissionRate}
+                                    onChange={(e) => setEditFormData({ ...editFormData, commissionRate: Number(e.target.value) })}
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex gap-3 mt-6">
+                            <button
+                                onClick={() => { setShowEditModal(false); setEditingCategory(null); }}
+                                className="flex-1 px-4 py-2 bg-gray-200 dark:bg-slate-600 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleSaveEdit}
+                                className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                            >
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+
+
+const HomepageTab = () => {
+    const { language, heroSlides, platformSettings, updatePlatformSettings, updateHeroSlides } = useApp();
+    const [slides, setSlides] = useState(heroSlides);
+    const [activeSection, setActiveSection] = useState<'hero' | 'announcement' | 'sections' | 'promotions'>('hero');
+    const [showAddSlideModal, setShowAddSlideModal] = useState(false);
+    const [newSlide, setNewSlide] = useState({ titleEn: '', titleBn: '', subtitleEn: '', subtitleBn: '', image: '', link: '' });
+
+    // Promotional cards state
+    const [promoCards, setPromoCards] = useState([
+        { id: 1, title: 'Flat 10% Off', image: 'https://picsum.photos/200/200?random=1', bgColor: '#d1f4e0' },
+        { id: 2, title: 'Buy 1 Get 1', image: 'https://picsum.photos/200/200?random=2', bgColor: '#ffe4cc' },
+        { id: 3, title: 'New Arrivals', image: 'https://picsum.photos/200/200?random=3', bgColor: '#d4e4f7' }
+    ]);
+    const [showAddPromoModal, setShowAddPromoModal] = useState(false);
+    const [newPromoCard, setNewPromoCard] = useState({ title: '', image: '', bgColor: '#ffffff' });
+
+    const handleAddSlide = () => {
+        if (!newSlide.titleEn || !newSlide.image) {
+            alert('Please fill required fields (Title EN and Image)');
+            return;
+        }
+        const slide = {
+            image: newSlide.image,
+            title: { en: newSlide.titleEn, bn: newSlide.titleBn || newSlide.titleEn },
+            subtitle: { en: newSlide.subtitleEn, bn: newSlide.subtitleBn || newSlide.subtitleEn },
+            link: newSlide.link
+        };
+        const updatedSlides = [...slides, slide];
+        setSlides(updatedSlides);
+        if (updateHeroSlides) updateHeroSlides(updatedSlides);
+        setNewSlide({ titleEn: '', titleBn: '', subtitleEn: '', subtitleBn: '', image: '', link: '' });
+        setShowAddSlideModal(false);
+    };
+
+    const handleDeleteSlide = (index: number) => {
+        if (confirm('Delete this slide?')) {
+            const updatedSlides = slides.filter((_, i) => i !== index);
+            setSlides(updatedSlides);
+            if (updateHeroSlides) updateHeroSlides(updatedSlides);
+        }
+    };
+
+    const handleAddPromoCard = () => {
+        if (!newPromoCard.title) {
+            alert('Please enter at least a title');
+            return;
+        }
+        const card = {
+            id: promoCards.length + 1,
+            title: newPromoCard.title,
+            image: newPromoCard.image || 'https://picsum.photos/200/200?random=' + Date.now(),
+            bgColor: newPromoCard.bgColor
+        };
+        setPromoCards([...promoCards, card]);
+        setNewPromoCard({ title: '', image: '', bgColor: '#ffffff' });
+        setShowAddPromoModal(false);
+    };
+
+    const handleDeletePromoCard = (id: number) => {
+        if (confirm('Delete this promotional card?')) {
+            setPromoCards(promoCards.filter(c => c.id !== id));
+        }
+    };
+
+    return (
+        <div className="p-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                {language === 'en' ? 'Homepage Management' : 'হোমপেজ পরিচালনা'}
+            </h2>
+
+            {/* Sub-tabs */}
+            <div className="flex space-x-4 mb-6 border-b dark:border-slate-700" >
+                <button
+                    onClick={() => setActiveSection('hero')}
+                    className={`pb-2 px-4 ${activeSection === 'hero' ? 'border-b-2 border-indigo-500 text-indigo-600' : 'text-gray-500'}`}
+                >
+                    Hero Carousel
+                </button>
+                <button
+                    onClick={() => setActiveSection('announcement')}
+                    className={`pb-2 px-4 ${activeSection === 'announcement' ? 'border-b-2 border-indigo-500 text-indigo-600' : 'text-gray-500'}`}
+                >
+                    Announcement Bar
+                </button>
+                <button
+                    onClick={() => setActiveSection('sections')}
+                    className={`pb-2 px-4 ${activeSection === 'sections' ? 'border-b-2 border-indigo-500 text-indigo-600' : 'text-gray-500'}`}
+                >
+                    Page Sections
+                </button>
+                <button
+                    onClick={() => setActiveSection('promotions')}
+                    className={`pb-2 px-4 ${activeSection === 'promotions' ? 'border-b-2 border-indigo-500 text-indigo-600' : 'text-gray-500'}`}
+                >
+                    Promotions
+                </button>
+            </div >
+
+            {activeSection === 'hero' && (
+                <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+                    <div className="mb-4">
+                        <button onClick={() => setShowAddSlideModal(true)} className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                            + Add New Slide
+                        </button>
+                    </div>
+
+                    <div className="space-y-4">
+                        {slides.map((slide, idx) => (
+                            <div key={idx} className="border dark:border-slate-700 rounded-lg p-4 flex items-center gap-4">
+                                <img src={slide.image} alt={slide.title[language]} className="w-24 h-24 object-cover rounded" />
+                                <div className="flex-1">
+                                    <h3 className="font-bold text-gray-900 dark:text-white">{slide.title[language]}</h3>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">{slide.subtitle[language]}</p>
+                                </div>
+                                <div className="flex gap-2">
+                                    <button className="text-indigo-600 hover:text-indigo-900">Edit</button>
+                                    <button onClick={() => handleDeleteSlide(idx)} className="text-red-600 hover:text-red-900">Delete</button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {
+                activeSection === 'announcement' && (
+                    <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6 max-w-2xl">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-white">Announcement Bar</h3>
+                            <label className="relative inline-flex items-center cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={platformSettings.announcement?.show || false}
+                                    onChange={(e) => updatePlatformSettings({
+                                        ...platformSettings,
+                                        announcement: { ...platformSettings.announcement, show: e.target.checked }
+                                    })}
+                                    className="sr-only peer"
+                                />
+                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600"></div>
+                            </label>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Message (English)</label>
+                                <input
+                                    type="text"
+                                    value={platformSettings.announcement?.message?.en || ''}
+                                    onChange={(e) => updatePlatformSettings({
+                                        ...platformSettings,
+                                        announcement: {
+                                            ...platformSettings.announcement,
+                                            message: { ...platformSettings.announcement.message, en: e.target.value }
+                                        }
+                                    })}
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Message (Bengali)</label>
+                                <input
+                                    type="text"
+                                    value={platformSettings.announcement?.message?.bn || ''}
+                                    onChange={(e) => updatePlatformSettings({
+                                        ...platformSettings,
+                                        announcement: {
+                                            ...platformSettings.announcement,
+                                            message: { ...platformSettings.announcement.message, bn: e.target.value }
+                                        }
+                                    })}
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Link (Optional)</label>
+                                <input
+                                    type="text"
+                                    value={platformSettings.announcement?.link || ''}
+                                    onChange={(e) => updatePlatformSettings({
+                                        ...platformSettings,
+                                        announcement: { ...platformSettings.announcement, link: e.target.value }
+                                    })}
+                                    className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                    placeholder="/products/promo"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+
+            {
+                activeSection === 'sections' && (
+                    <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6 max-w-2xl space-y-6">
+                        <div className="flex items-center justify-between pb-4 border-b dark:border-slate-700">
+                            <div>
+                                <h3 className="font-bold text-gray-900 dark:text-white">Promotions Section</h3>
+                                <p className="text-sm text-gray-500">Show the "Promotions" block on homepage</p>
+                            </div>
+                            <label className="relative inline-flex items-center cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    value=""
+                                    checked={platformSettings.showPromotionsSection}
+                                    onChange={(e) => updatePlatformSettings({ ...platformSettings, showPromotionsSection: e.target.checked })}
+                                    className="sr-only peer"
+                                />
+                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600"></div>
+                            </label>
+                        </div>
+
+                        <div className="flex items-center justify-between pb-4 border-b dark:border-slate-700">
+                            <div>
+                                <h3 className="font-bold text-gray-900 dark:text-white">Featured Vendors</h3>
+                                <p className="text-sm text-gray-500">Show the "Featured Shops" block on homepage</p>
+                            </div>
+                            <label className="relative inline-flex items-center cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    value=""
+                                    checked={platformSettings.showFeaturedSection}
+                                    onChange={(e) => updatePlatformSettings({ ...platformSettings, showFeaturedSection: e.target.checked })}
+                                    className="sr-only peer"
+                                />
+                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+    )
+}
+
+{
+    activeSection === 'promotions' && (
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+            <div className="mb-4">
+                <button onClick={() => setShowAddPromoModal(true)} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                    + Add Promotional Card
+                </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {promoCards.map(card => (
+                    <div key={card.id} className="rounded-lg p-6 relative" style={{ backgroundColor: card.bgColor }}>
+                        <button
+                            onClick={() => handleDeletePromoCard(card.id)}
+                            className="absolute top-2 right-2 text-red-600 hover:text-red-900 font-bold text-xl"
+                        >
+                            ×
+                        </button>
+                        {card.image && (
+                            <img src={card.image} alt={card.title} className="w-32 h-32 object-cover rounded mx-auto mb-4" />
+                        )}
+                        <h3 className="text-center font-bold text-gray-900">{card.title}</h3>
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
+}
+
+{/* Add Hero Slide Modal */ }
+{
+    showAddSlideModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white dark:bg-slate-800 rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">Add New Hero Slide</h3>
+                <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title (EN) *</label>
+                            <input
+                                type="text"
+                                value={newSlide.titleEn}
+                                onChange={(e) => setNewSlide({ ...newSlide, titleEn: e.target.value })}
+                                className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title (BN)</label>
+                            <input
+                                type="text"
+                                value={newSlide.titleBn}
+                                onChange={(e) => setNewSlide({ ...newSlide, titleBn: e.target.value })}
+                                className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                            />
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Subtitle (EN)</label>
+                            <input
+                                type="text"
+                                value={newSlide.subtitleEn}
+                                onChange={(e) => setNewSlide({ ...newSlide, subtitleEn: e.target.value })}
+                                className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Subtitle (BN)</label>
+                            <input
+                                type="text"
+                                value={newSlide.subtitleBn}
+                                onChange={(e) => setNewSlide({ ...newSlide, subtitleBn: e.target.value })}
+                                className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                            />
+                        </div>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Image URL *</label>
+                        <input
+                            type="url"
+                            value={newSlide.image}
+                            onChange={(e) => setNewSlide({ ...newSlide, image: e.target.value })}
+                            className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Link (optional)</label>
+                        <input
+                            type="url"
+                            value={newSlide.link}
+                            onChange={(e) => setNewSlide({ ...newSlide, link: e.target.value })}
+                            className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                        />
+                    </div>
+                </div>
+                <div className="flex gap-3 mt-6">
+                    <button
+                        onClick={() => setShowAddSlideModal(false)}
+                        className="flex-1 px-4 py-2 bg-gray-200 dark:bg-slate-600 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={handleAddSlide}
+                        className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                    >
+                        Add Slide
+                    </button>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+{/* Add Promotional Card Modal */ }
+{
+    showAddPromoModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white dark:bg-slate-800 rounded-lg p-6 w-full max-w-md">
+                <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">Add Promotional Card</h3>
+                <div className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title *</label>
+                        <input
+                            type="text"
+                            value={newPromoCard.title}
+                            onChange={(e) => setNewPromoCard({ ...newPromoCard, title: e.target.value })}
+                            placeholder="e.g., Flat 10% Off"
+                            className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Image URL</label>
+                        <input
+                            type="url"
+                            value={newPromoCard.image}
+                            onChange={(e) => setNewPromoCard({ ...newPromoCard, image: e.target.value })}
+                            placeholder="Leave empty for random placeholder"
+                            className="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Background Color</label>
+                        <input
+                            type="color"
+                            value={newPromoCard.bgColor}
+                            onChange={(e) => setNewPromoCard({ ...newPromoCard, bgColor: e.target.value })}
+                            className="w-full h-10 px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600"
+                        />
+                    </div>
+                </div>
+                <div className="flex gap-3 mt-6">
+                    <button
+                        onClick={() => setShowAddPromoModal(false)}
+                        className="flex-1 px-4 py-2 bg-gray-200 dark:bg-slate-600 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={handleAddPromoCard}
+                        className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                    >
+                        Add Card
+                    </button>
+                </div>
+            </div>
+        </div>
+    )
+}
+        </div >
+    );
+};
+
+
+const DropshippingTab = () => {
+    const { language } = useApp();
+    return (
+        <div className="p-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                {language === 'en' ? 'Dropshipping Management' : 'ড্রপশিপিং পরিচালনা'}
+            </h2>
+
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+                <p className="text-gray-600 dark:text-gray-400">
+                    {language === 'en'
+                        ? 'Manage dropshipping settings, suppliers, and orders here.'
+                        : 'এখানে ড্রপশিপিং সেটিংস, সরবরাহকারী এবং অর্ডার পরিচালনা করুন।'}
+                </p>
+            </div>
+        </div>
+    );
+};
+
+const AdminDashboardPage: React.FC = () => {
+    const {
+        language, platformSettings, updatePlatformSettings,
+        categoryCommissions, updateCategoryCommissions,
+        heroSlides, updateHeroSlides,
+        orders, products, vendors, users, updateOrderStatus
+    } = useApp();
+
+    const [activeTab, setActiveTab] = useState('analytics');
+    const [activeSetting, setActiveSetting] = useState<string | null>(null);
+
+    const tabs = [
+        { id: 'analytics', label: language === 'en' ? 'Analytics' : 'বিশ্লেষণ', icon: ChartBarIcon },
+        { id: 'orders', label: language === 'en' ? 'Orders' : 'অর্ডার', icon: ShoppingBagIcon },
+        { id: 'products', label: language === 'en' ? 'Products' : 'পণ্য', icon: ArchiveBoxIcon },
+        { id: 'vendors', label: language === 'en' ? 'Vendors' : 'বিক্রেতা', icon: StoreIcon },
+        { id: 'drivers', label: language === 'en' ? 'Drivers' : 'ড্রাইভার', icon: TruckIcon },
+        { id: 'agencies', label: language === 'en' ? 'Agencies' : 'এজেন্সি', icon: GlobeAltIcon },
+        { id: 'users', label: language === 'en' ? 'Users' : 'ব্যবহারকারী', icon: UserGroupIcon },
+        { id: 'roles', label: language === 'en' ? 'Roles' : 'ভূমিকা', icon: ShieldCheckIcon },
+        { id: 'payouts', label: language === 'en' ? 'Payouts' : 'প্রদান', icon: CurrencyDollarIcon },
+        { id: 'promotions', label: language === 'en' ? 'Promotions' : 'প্রচারণা', icon: MegaphoneIcon },
+        { id: 'categories', label: language === 'en' ? 'Categories' : 'বিভাগ', icon: ArchiveBoxIcon },
+        { id: 'homepage', label: language === 'en' ? 'Homepage' : 'হোমপেজ', icon: ChartBarIcon },
+        { id: 'dropshipping', label: language === 'en' ? 'Dropshipping' : 'ড্রপশিপিং', icon: TruckIcon },
+        { id: 'settings', label: language === 'en' ? 'Settings' : 'সেটিংস', icon: Cog8ToothIcon },
+    ];
+
+    const renderContent = () => {
+        switch (activeTab) {
+            case 'analytics':
+                return <AdminAnalyticsTab />;
+            case 'orders':
+                return <OrdersTab />;
+            case 'products':
+                return <ProductsTab />;
+            case 'vendors':
+                return <VendorsTab />;
+            case 'drivers':
+                return <DriversTab />;
+            case 'agencies':
+                return <AgenciesTab />;
+            case 'users':
+                return <UserManagementTab />;
+            case 'roles':
+                return <RoleManagementTab />;
+            case 'payouts':
+                return <AdminPayoutsTab />;
+            case 'promotions':
+                return <AdminPromotionsTab />;
+            case 'categories':
+                return <CategoriesTab />;
+            case 'homepage':
+                return <HomepageTab />;
+            case 'dropshipping':
+                return <DropshippingTab />;
+            case 'settings':
+                return <SettingsTab activeSetting={activeSetting} setActiveSetting={setActiveSetting} />;
+            default:
+                return <AdminAnalyticsTab />;
+        }
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    return (
+        <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
+            {/* Header */}
+            <div className="bg-white dark:bg-slate-800 shadow-sm border-b border-gray-200 dark:border-slate-700">
+                <div className="container mx-auto px-4 md:px-8 py-6">
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                        {language === 'en' ? 'Admin Dashboard' : 'অ্যাডমিন ড্যাশবোর্ড'}
+                    </h1>
+                    <p className="text-gray-600 dark:text-gray-400 mt-2">
+                        {language === 'en'
+                            ? 'Complete marketplace management and control center'
+                            : 'সম্পূর্ণ মার্কেটপ্লেস পরিচালনা এবং নিয়ন্ত্রণ কেন্দ্র'}
+                    </p>
+                </div>
+
+                {/* Tabs - Scrollable */}
+                <div className="container mx-auto px-4 md:px-8">
+                    <div className="flex gap-1 overflow-x-auto pb-px">
+                        {tabs.map((tab) => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`flex items-center gap-2 px-4 py-3 font-medium transition-colors border-b-2 whitespace-nowrap ${activeTab === tab.id
+                                    ? 'border-blue-600 text-blue-600 dark:text-blue-400'
+                                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                                    }`}
+                            >
+                                <tab.icon className="h-5 w-5" />
+                                {tab.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Content */}
+            <div className="container mx-auto px-4 md:px-8 py-8">
+                {renderContent()}
+            </div>
+        </div>
+    );
+};
+
+export default AdminDashboardPage;
