@@ -83,7 +83,7 @@ export const FlightService = {
                         body: { en: body, bn: body },
                         type: 'system',
                         relatedId: id,
-                        link: { name: 'userProfile', tab: 'flight' }
+                        link: JSON.stringify({ name: 'userProfile', tab: 'flight' })
                     });
                 }
             }

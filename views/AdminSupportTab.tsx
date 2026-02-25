@@ -45,7 +45,7 @@ const AdminSupportTab = () => {
                 body: { en: `Admin replied: ${reply.substring(0, 50)}...`, bn: `এডমিন রিপ্লাই দিয়েছে: ${reply.substring(0, 50)}...` },
                 type: 'message',
                 relatedId: selectedTicket.id,
-                link: { name: 'Support', params: { ticketId: selectedTicket.id } } // Adjust link structure as needed
+                link: JSON.stringify({ name: 'Support', params: { ticketId: selectedTicket.id } }) // Adjust link structure as needed
             });
 
             setReply('');
